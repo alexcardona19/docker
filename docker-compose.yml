@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: httpd:latest
+    container_name: frontend
+    volumes:
+      - ./frontend:/usr/local/apache2/htdocs/
+    ports:
+      - "80:80"
+
+  backend:
+    image: python:3.9
+    container_name: backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "5000:5000"
+    command: >
+      sh -c "pip install flask psycopg2 flask-cors && python app.py"
+
+  db:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: docker
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
+    driver: local
